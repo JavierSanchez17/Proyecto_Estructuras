@@ -1,10 +1,16 @@
 import sys
+import requests
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QMovie
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from PyQt6 import QtWidgets
 from interfaz import Ui_MainWindow
+from requests.api import request
+
+
+# comics = requests.get(f"").json()
+# personajes = requests.get(f"").json()
 
 
 class VentanaPrincipal(QMainWindow):
