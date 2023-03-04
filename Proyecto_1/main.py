@@ -67,8 +67,8 @@ class VentanaPrincipal(QMainWindow):
     def gif(self):
         animation = QMovie('Images/fondo_info.gif')
         self.interfaz.gif.setMovie(animation)
-        self.interfaz.gif.setMaximumSize(700, 160)
-        self.interfaz.gif.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.interfaz.gif.setAlignment(Qt.AlignmentFlag.AlignTop)
         animation.start()
 
 
