@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1138</width>
-    <height>673</height>
+    <width>940</width>
+    <height>701</height>
    </rect>
   </property>
   <property name="font">
@@ -472,7 +472,7 @@ border-radius:20px
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <property name="currentIndex">
-          <number>3</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="page1">
           <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -492,34 +492,56 @@ border-radius:20px
           </layout>
          </widget>
          <widget class="QWidget" name="page2">
-          <widget class="QLabel" name="label_2">
-           <property name="geometry">
-            <rect>
-             <x>330</x>
-             <y>100</y>
-             <width>111</width>
-             <height>31</height>
-            </rect>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <property name="leftMargin">
+            <number>0</number>
            </property>
-           <property name="text">
-            <string>Comics_Page</string>
+           <property name="topMargin">
+            <number>0</number>
            </property>
-          </widget>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item row="0" column="0">
+            <layout class="QGridLayout" name="layout_comics">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+            </layout>
+           </item>
+          </layout>
          </widget>
          <widget class="QWidget" name="page3">
-          <widget class="QLabel" name="label_3">
-           <property name="geometry">
-            <rect>
-             <x>360</x>
-             <y>140</y>
-             <width>111</width>
-             <height>31</height>
-            </rect>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <property name="leftMargin">
+            <number>0</number>
            </property>
-           <property name="text">
-            <string>Personajes_page</string>
+           <property name="topMargin">
+            <number>0</number>
            </property>
-          </widget>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item row="0" column="0">
+            <layout class="QGridLayout" name="layout_personajes">
+             <property name="spacing">
+              <number>50</number>
+             </property>
+            </layout>
+           </item>
+          </layout>
          </widget>
          <widget class="QWidget" name="page4">
           <property name="styleSheet">
@@ -606,7 +628,7 @@ border-radius:20px
               </size>
              </property>
              <property name="text">
-              <string>TextLabel</string>
+              <string/>
              </property>
              <property name="scaledContents">
               <bool>true</bool>

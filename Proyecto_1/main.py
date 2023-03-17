@@ -1,23 +1,21 @@
 import sys
 import requests
 
-from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QMovie
 from PyQt6.QtWidgets import QApplication, QMainWindow
-from PyQt6 import QtWidgets
+from PyQt6 import QtWidgets, QtGui
 from interfaz import Ui_MainWindow
-from requests.api import request
-
-
-# comics = requests.get(f"").json()
-# personajes = requests.get(f"").json()
+from personajes_url import Personajes_Url
 
 
 class VentanaPrincipal(QMainWindow):
     def __init__(self):
         super(VentanaPrincipal, self).__init__()
-        self.interfaz = Ui_MainWindow()    # Se carga la interfaz
+        self.interfaz = Ui_MainWindow()  # Se carga la interfaz
         self.interfaz.setupUi(self)
+
+        info_personajes = Personajes_Url().personajes
+        self.personajes = info_personajes['data']['results']
 
         # Nombre de la ventana principal
         self.setWindowTitle('Mundo Comic')
@@ -49,8 +47,8 @@ class VentanaPrincipal(QMainWindow):
         self.interfaz.bt_info.clicked.connect(
             lambda: self.interfaz.stackedWidget.setCurrentWidget(self.interfaz.page4))
 
-        # Mostrar gif
-        self.gif()
+        self.info()
+        self.characters()
 
     # Metodos
     # Minimizar Ventana
@@ -74,6 +72,35 @@ class VentanaPrincipal(QMainWindow):
         animation = QMovie('Images/fondo_info.gif')
         self.interfaz.gif.setMovie(animation)
         animation.start()
+
+    # Pagina comics
+    def characters(self):
+        cont = 0
+        for columnas in range(4):
+            for filas in range(5):
+                for caracter in range(len(self.personajes)):
+                    image_data = requests.get(self.personajes[cont]['thumbnail']['path']+'.jpg').content
+                    pixmap = QtGui.QPixmap()
+                    pixmap.loadFromData(image_data)
+                    label = QtWidgets.QLabel()
+                    label.setPixmap(pixmap)
+                    label.setFixedWidth(160)
+                    label.setFixedHeight(160)
+                    label.setScaledContents(True)
+
+                    self.interfaz.layout_personajes.addWidget(label, columnas, filas)
+
+                cont += 1
+
+        self.interfaz.page2.setLayout(self.interfaz.layout_personajes)
+
+    # Pagina personajes
+    def comics(self):
+        pass
+
+    # Pagina info
+    def info(self):
+        self.gif()
 
 
 app = QApplication(sys.argv)
