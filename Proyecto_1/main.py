@@ -9,13 +9,15 @@ from personajes_url import Personajes_Url
 from descripcion_personajes import DescripcionPersonajes
 from comics_url import Comics_url
 from descripcion_comics import DescripcionComics
-
+from PyQt6.QtCore import Qt
 
 class VentanaPrincipal(QMainWindow):
     def __init__(self):
         super(VentanaPrincipal, self).__init__()
         self.interfaz = Ui_MainWindow()  # Se carga la interfaz
         self.interfaz.setupUi(self)
+
+        self.vacia = []
 
         self.cont = 0
         self.contc = 0
@@ -57,7 +59,7 @@ class VentanaPrincipal(QMainWindow):
         self.interfaz.bt_exit.clicked.connect(lambda: self.close())
 
         # Linea de codigo para ocultar la barra de titulo
-        # self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
         # Al acercar a el margen de arriba maximiza la ventana
         self.gripSize = 10
@@ -79,17 +81,17 @@ class VentanaPrincipal(QMainWindow):
         self.comics_present()
 
         x = 0
+        xc = 0
         for cont in range(10):
             self.personaje_presentacion(x)
             self.button_name[x].clicked.connect(self.connect_bt_personajes)
             x += 1
 
+        for contc in range(10):
+            self.comics_presentacion(xc)
+            self.button_namec[xc].clicked.connect(self.connect_bt_comics)
+            xc += 1
         self.descripcionpersonaje.setLayout(self.descripcionpersonaje.layoutmain)
-
-        for cont in range(10):
-            self.comics_presentacion(x)
-            self.button_namec[x].clicked.connect(self.connect_bt_comics)
-            x += 1
 
         self.descripcioncomics.setLayout(self.descripcioncomics.layoutmain)
 
@@ -204,30 +206,69 @@ class VentanaPrincipal(QMainWindow):
 
         self.descripcionpersonaje.exec()
 
-    def comics_presentacion(self, x):
-        self.imagen_comics.insert(x, requests.get(self.comics[x]['thumbnail']['path'] + '.jpg').content)
-        self.nombre_comic.insert(x, self.comics[x]['title'])
-        self.desc_personaje.insert(x, self.comics[x]['description'])
-        self.personajes_existentes.insert(x, self.comics[x]['characters']['items'][0]['name'])
-        self.creadores_nombre.insert(x, self.comics[x]['creators']['items'][0]['name'])
-        image = requests.get(self.comics[x]['creators']['items'][0]['resourceURI']).json()
-        self.creadores_imagen.insert(x, requests.get(image['thumbnail']).content)
+    def comics_presentacion(self, xc):
+        self.imagen_comics.insert(xc, requests.get(self.comics[xc]['thumbnail']['path'] + '.jpg').content)
+        self.nombre_comic.insert(xc, self.comics[xc]['title'])
+        self.desc_comics.insert(xc, self.comics[xc]['description'])
 
-        self.pixmapcreadores.loadFromData(self.creadores_imagen[x])
-        self.pixmapc.loadFromData(self.imagen_comics[x])
+        if self.comics[xc]['characters']['items'] == self.vacia:
+            self.personajes_existentes.insert(xc, '')
+        else:
+            self.personajes_existentes.insert(xc, self.comics[xc]['characters']['items'][0]['name'])
 
-        self.descripcioncomics.image.setPixmap(self.pixmap)
+        if self.comics[xc]['creators']['items'] == self.vacia:
+            self.creadores_nombre.insert(xc, '')
+        else:
+            self.creadores_nombre.insert(xc, self.comics[xc]['creators']['items'][0]['name'])
+
+        url_image_creators = (self.comics[xc]['creators']['items'])
+        tamanio_creators = (self.comics[xc]['creators']['available'])
+        listimage = []
+        labels = []
+        if tamanio_creators > 1:
+            for c in range(tamanio_creators):
+                listimage.insert(c, requests.get(
+                    url_image_creators[0]['resourceURI'] +
+                    '?ts=1&apikey=130c7354b5734b793a253f9087d61518&hash=a165aa46a0c484d5a49298745951c610').json())
+                self.creadores_imagen.insert(
+                    xc, requests.get(listimage[c]['data']['results'][0]['thumbnail']['path'] + '.jpg').content)
+
+                image = QtWidgets.QHBoxLayout()
+                labels.insert(c, QtWidgets.QLabel())
+                image.addWidget(labels[c])
+
+                self.pixmapcreadores.loadFromData(self.creadores_imagen[xc])
+                self.descripcioncomics.creadores_foto.setPixmap(self.pixmapcreadores)
+                self.descripcioncomics.creadores_foto.setPixmap(self.pixmapcreadores)
+                self.descripcioncomics.creadores_foto.setFixedWidth(100)
+                self.descripcioncomics.creadores_foto.setFixedHeight(160)
+                self.descripcioncomics.creadores_foto.setScaledContents(True)
+
+        elif tamanio_creators == 0:
+            self.creadores_imagen.insert(xc, '')
+
+        else:
+            image = requests.get(
+                url_image_creators[0]['resourceURI'] +
+                '?ts=1&apikey=130c7354b5734b793a253f9087d61518&hash=a165aa46a0c484d5a49298745951c610').json()
+            self.creadores_imagen.insert(xc, requests.get(
+                image['data']['results'][0]['thumbnail']['path'] + '.jpg').content)
+            self.pixmapcreadores.loadFromData(self.creadores_imagen[xc])
+            self.descripcioncomics.creadores_foto.setPixmap(self.pixmapcreadores)
+            self.descripcioncomics.creadores_foto.setFixedWidth(100)
+            self.descripcioncomics.creadores_foto.setFixedHeight(160)
+            self.descripcioncomics.creadores_foto.setScaledContents(True)
+
+        self.pixmapc.loadFromData(self.imagen_comics[xc])
+
+        self.descripcioncomics.image.setPixmap(self.pixmapc)
         self.descripcioncomics.image.setFixedWidth(160)
         self.descripcioncomics.image.setFixedHeight(160)
         self.descripcioncomics.image.setScaledContents(True)
-        self.descripcioncomics.nombre.setText(self.nombre_personaje[x])
-        self.descripcioncomics.descripcion.setText(self.desc_personaje[x])
-        self.descripcioncomics.personajes.setText(self.personajes_existentes[x])
-        self.descripcioncomics.creadores.setText(self.creadores_nombre[x])
-        self.descripcioncomics.creadores_foto.setPixmap(self.pixmapcreadores)
-        self.descripcioncomics.creadores_foto.setFixedWidth(100)
-        self.descripcioncomics.creadores_foto.setFixedHeight(160)
-        self.descripcioncomics.creadores_foto.setScaledContents(True)
+        self.descripcioncomics.nombre.setText(self.nombre_comic[xc])
+        self.descripcioncomics.descripcion.setText(self.desc_comics[xc])
+        self.descripcioncomics.personajes.setText(self.personajes_existentes[xc])
+        self.descripcioncomics.creadores.setText(self.creadores_nombre[xc])
 
     def connect_bt_comics(self):
         self.descripcioncomics.layoutmain.addWidget(self.descripcioncomics.image)
@@ -237,7 +278,7 @@ class VentanaPrincipal(QMainWindow):
         self.descripcioncomics.layoutmain.addWidget(self.descripcioncomics.creadores)
         self.descripcioncomics.layoutmain.addWidget(self.descripcioncomics.creadores_foto)
 
-        self.descripcionpersonaje.exec()
+        self.descripcioncomics.exec()
 
 
 app = QApplication(sys.argv)
